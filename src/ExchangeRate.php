@@ -2,6 +2,4 @@
 
 namespace R94ever\CurrencyExchangeRate;
 
-class ExchangeRate
-{
-}
+class ExchangeRate {}
