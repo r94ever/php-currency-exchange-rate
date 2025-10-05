@@ -15,4 +15,9 @@ class ExchangeRateException extends Exception
     {
         return new self('Invalid target currency code');
     }
+
+    public static function providerNotFound(string $name): self
+    {
+        return new self("Exchange rate provider '$name' not found");
+    }
 }

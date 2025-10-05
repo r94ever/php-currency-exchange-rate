@@ -7,10 +7,18 @@ use PHPUnit\Framework\TestCase;
 use R94ever\CurrencyExchangeRate\Enums\Currency;
 use R94ever\CurrencyExchangeRate\ExchangeRate;
 use R94ever\CurrencyExchangeRate\ExchangeRateException;
+use R94ever\CurrencyExchangeRate\ProviderRegistry;
 use R94ever\CurrencyExchangeRate\Providers\BaseProvider;
+use R94ever\CurrencyExchangeRate\Tests\Stubs\MockProvider;
 
 class ExchangeRateTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        ProviderRegistry::clear();
+    }
+
     #[Test]
     public function it_can_convert_using_string_currency_codes()
     {
@@ -98,5 +106,38 @@ class ExchangeRateTest extends TestCase
         $exchangeRate->useProvider($provider2);
 
         $this->assertSame($provider2, $exchangeRate->getProvider());
+    }
+
+    #[Test]
+    public function it_can_use_registered_provider_by_name()
+    {
+        ProviderRegistry::register('mock', MockProvider::class);
+
+        $exchangeRate = new ExchangeRate();
+        $exchangeRate->useProvider('mock');
+
+        $this->assertInstanceOf(MockProvider::class, $exchangeRate->getProvider());
+    }
+
+    #[Test]
+    public function it_throws_exception_when_using_unregistered_provider()
+    {
+        $exchangeRate = new ExchangeRate();
+
+        $this->expectException(ExchangeRateException::class);
+        $this->expectExceptionMessage("Exchange rate provider 'unregistered' not found");
+        $exchangeRate->useProvider('unregistered');
+    }
+
+    #[Test]
+    public function it_works_with_custom_provider()
+    {
+        ProviderRegistry::register('mock', MockProvider::class);
+
+        $exchangeRate = new ExchangeRate();
+        $exchangeRate->useProvider('mock');
+
+        $result = $exchangeRate->convert(100.0, Currency::USD, Currency::EUR);
+        $this->assertEquals(150.0, $result);
     }
 }

@@ -7,14 +7,18 @@ use R94ever\CurrencyExchangeRate\Providers\BaseProvider;
 
 class ExchangeRate
 {
-    public function __construct(protected BaseProvider $provider)
+    public function __construct(protected ?BaseProvider $provider = null)
     {
         //
     }
 
-    public function useProvider(BaseProvider $provider): self
+    public function useProvider(BaseProvider|string $provider): self
     {
-        $this->provider = $provider;
+        if (is_string($provider)) {
+            $this->provider = ProviderRegistry::make($provider);
+        } else {
+            $this->provider = $provider;
+        }
 
         return $this;
     }
