@@ -1,8 +1,8 @@
 # Currency exchange rate package for PHP
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/r94ever/php-currency-exchange-rate.svg?style=flat-square)](https://packagist.org/packages/r94ever/php-currency-exchange-rate)
-[![Tests](https://img.shields.io/github/actions/workflow/status/r94ever/php-currency-exchange-rate/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/r94ever/php-currency-exchange-rate/actions/workflows/run-tests.yml)
-[![Total Downloads](https://img.shields.io/packagist/dt/r94ever/php-currency-exchange-rate.svg?style=flat-square)](https://packagist.org/packages/r94ever/php-currency-exchange-rate)
+[![Tests](https://github.com/r94ever/php-currency-exchange-rate/actions/workflows/run-tests.yml/badge.svg)](https://github.com/r94ever/php-currency-exchange-rate/actions/workflows/run-tests.yml)
+[![License](https://img.shields.io/github/license/r94ever/laravel-media.svg)](https://github.com/r94ever/laravel-media/blob/master/LICENSE.md)
 
 This package provides a simple and easy way to get currency exchange rates from various providers.
 
@@ -214,7 +214,6 @@ Please see [CONTRIBUTING](./CONTRIBUTING.md) for details.
 ## Credits
 
 - [Van Duong Thanh](https://github.com/r94ever)
-- [All Contributors](../../contributors)
 
 ## License
 
