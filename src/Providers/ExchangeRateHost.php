@@ -4,18 +4,35 @@ namespace R94ever\CurrencyExchangeRate\Providers;
 
 use R94ever\CurrencyExchangeRate\Enums\Currency;
 use R94ever\CurrencyExchangeRate\ExchangeRateException;
+use R94ever\CurrencyExchangeRate\HttpDrivers\CurlHttpClient;
 use R94ever\CurrencyExchangeRate\HttpDrivers\HttpClientInterface;
 
 /**
  * @link https://www.exchangerate-api.com/
  */
-class ExchangeRateHost extends BaseProvider
+class ExchangeRateHost extends BaseProvider implements UseHttpClientInterface
 {
     protected const BASE_URL = 'https://api.exchangerate.host';
 
-    public function __construct(private readonly string $accessKey, protected HttpClientInterface $httpClient)
+    private ?HttpClientInterface $httpClient = null;
+
+    public function __construct(private readonly string $accessKey)
     {
         parent::__construct();
+
+        $this->useHttpClient(new CurlHttpClient());
+    }
+
+    public function useHttpClient(HttpClientInterface $httpClient): self
+    {
+        $this->httpClient = $httpClient;
+
+        return $this;
+    }
+
+    public function getHttpClient(): HttpClientInterface
+    {
+        return $this->httpClient;
     }
 
     /**
@@ -30,7 +47,7 @@ class ExchangeRateHost extends BaseProvider
      */
     public function convert(float $amount, Currency|string $from, Currency|string $to): ?float
     {
-        $response = $this->httpClient->get(self::BASE_URL.'/convert', [
+        $response = $this->getHttpClient()->get(self::BASE_URL.'/convert', [
             'access_key' => $this->accessKey,
             'from' => $from->value,
             'to' => $to->value,

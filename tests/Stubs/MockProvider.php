@@ -13,11 +13,4 @@ class MockProvider extends BaseProvider
     {
         return $amount * $this->rate;
     }
-
-    public function setRate(float $rate): self
-    {
-        $this->rate = $rate;
-
-        return $this;
-    }
 }
