@@ -2,25 +2,26 @@
 
 namespace R94ever\CurrencyExchangeRate;
 
-use R94ever\CurrencyExchangeRate\Providers\BaseProvider;
+use InvalidArgumentException;
+use R94ever\CurrencyExchangeRate\Providers\ExchangeRateProviderInterface;
 
 class ProviderRegistry
 {
     /**
-     * @var array<string, class-string<BaseProvider>>
+     * @var array<string, class-string<ExchangeRateProviderInterface>>
      */
     protected static array $providers = [];
 
     /**
      * Register a new exchange rate provider
      *
-     * @param  class-string<BaseProvider>  $providerClass
+     * @param  class-string<ExchangeRateProviderInterface>  $providerClass
      */
     public static function register(string $name, string $providerClass): void
     {
-        if (! is_subclass_of($providerClass, BaseProvider::class)) {
-            throw new \InvalidArgumentException(
-                'Provider class must extend '.BaseProvider::class
+        if (!is_subclass_of($providerClass, ExchangeRateProviderInterface::class)) {
+            throw new InvalidArgumentException(
+                'Provider class must implement '.ExchangeRateProviderInterface::class
             );
         }
 
@@ -32,7 +33,7 @@ class ProviderRegistry
      *
      * @throws ExchangeRateException
      */
-    public static function make(string $name): BaseProvider
+    public static function make(string $name): ExchangeRateProviderInterface
     {
         $name = strtolower($name);
 
@@ -42,7 +43,7 @@ class ProviderRegistry
 
         $providerClass = static::$providers[$name];
 
-        return new $providerClass;
+        return new $providerClass();
     }
 
     /**
@@ -56,7 +57,7 @@ class ProviderRegistry
     /**
      * Get all registered providers
      *
-     * @return array<string, class-string<BaseProvider>>
+     * @return array<string, class-string<ExchangeRateProviderInterface>>
      */
     public static function getProviders(): array
     {

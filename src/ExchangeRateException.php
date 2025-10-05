@@ -6,14 +6,9 @@ use Exception;
 
 class ExchangeRateException extends Exception
 {
-    public static function invalidSourceCurrency(): self
+    public static function invalidCurrency(): self
     {
-        return new self('Invalid source currency code');
-    }
-
-    public static function invalidTargetCurrency(): self
-    {
-        return new self('Invalid target currency code');
+        return new self('Invalid currency code');
     }
 
     public static function providerNotFound(string $name): self

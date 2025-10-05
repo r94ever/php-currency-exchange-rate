@@ -2,6 +2,7 @@
 
 namespace R94ever\CurrencyExchangeRate\Tests\Stubs;
 
+use R94ever\CurrencyExchangeRate\CurrencyRate;
 use R94ever\CurrencyExchangeRate\Enums\Currency;
 use R94ever\CurrencyExchangeRate\Providers\BaseProvider;
 
@@ -12,5 +13,13 @@ class MockProvider extends BaseProvider
     public function convert(float $amount, Currency $from, Currency $to): ?float
     {
         return $amount * $this->rate;
+    }
+
+    public function getRates(Currency $source, array $targets): array
+    {
+        return array_map(
+            fn (Currency $target) => new CurrencyRate($source, $target, $this->rate),
+            $targets
+        );
     }
 }

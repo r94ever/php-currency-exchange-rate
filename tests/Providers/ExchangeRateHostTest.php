@@ -188,4 +188,134 @@ class ExchangeRateHostTest extends TestCase
 
         $this->assertEquals($expectedResult, $result);
     }
+
+    #[Test]
+    public function it_can_get_multiple_rates_successfully()
+    {
+        $source = Currency::USD;
+        $targets = [Currency::EUR, Currency::GBP, Currency::JPY];
+        $responseData = [
+            'success' => true,
+            'quotes' => [
+                'USDEUR' => 0.85,
+                'USDGBP' => 0.73,
+                'USDJPY' => 110.25,
+            ],
+        ];
+
+        $this->response->expects($this->once())
+            ->method('getBody')
+            ->willReturn($responseData);
+
+        $this->httpClient->expects($this->once())
+            ->method('get')
+            ->with(
+                'https://api.exchangerate.host/live',
+                [
+                    'access_key' => $this->testAccessKey,
+                    'source' => $source->value,
+                    'currencies' => 'EUR,GBP,JPY',
+                ]
+            )
+            ->willReturn($this->response);
+
+        $rates = $this->provider
+            ->useHttpClient($this->httpClient)
+            ->getRates($source, $targets);
+
+        $this->assertCount(3, $rates);
+
+        // Check each rate
+        foreach ($rates as $rate) {
+            $this->assertEquals($source, $rate->source);
+            $this->assertContains($rate->target, $targets);
+            $this->assertEquals(
+                $responseData['quotes']['USD' . $rate->target->value],
+                $rate->rate
+            );
+        }
+    }
+
+    #[Test]
+    public function it_throws_exception_on_get_rates_api_error()
+    {
+        $source = Currency::USD;
+        $targets = [Currency::EUR, Currency::GBP];
+        $errorMessage = 'Invalid API key';
+        $errorCode = 101;
+
+        $this->response->expects($this->once())
+            ->method('getBody')
+            ->willReturn([
+                'success' => false,
+                'error' => [
+                    'code' => $errorCode,
+                    'info' => $errorMessage,
+                ],
+            ]);
+
+        $this->httpClient->expects($this->once())
+            ->method('get')
+            ->willReturn($this->response);
+
+        $this->expectException(ExchangeRateException::class);
+        $this->expectExceptionMessage($errorMessage);
+        $this->expectExceptionCode($errorCode);
+
+        $this->provider
+            ->useHttpClient($this->httpClient)
+            ->getRates($source, $targets);
+    }
+
+    #[Test]
+    public function it_throws_exception_with_unknown_error_when_get_rates_error_info_missing()
+    {
+        $source = Currency::USD;
+        $targets = [Currency::EUR, Currency::GBP];
+
+        $this->response->expects($this->once())
+            ->method('getBody')
+            ->willReturn([
+                'success' => false,
+                // Missing error info
+            ]);
+
+        $this->httpClient->expects($this->once())
+            ->method('get')
+            ->willReturn($this->response);
+
+        $this->expectException(ExchangeRateException::class);
+        $this->expectExceptionMessage('Unknown error');
+
+        $this->provider
+            ->useHttpClient($this->httpClient)
+            ->getRates($source, $targets);
+    }
+
+    #[Test]
+    public function it_normalizes_rates_correctly()
+    {
+        $source = Currency::USD;
+        $ratesFromResponse = [
+            'USDEUR' => 0.85,
+            'USDGBP' => 0.73,
+            'USDJPY' => 110.25,
+        ];
+
+        $normalizedRates = $this->provider->normalizeRates($source, $ratesFromResponse);
+
+        $this->assertCount(3, $normalizedRates);
+
+        $expectedRates = [
+            ['target' => Currency::EUR, 'rate' => 0.85],
+            ['target' => Currency::GBP, 'rate' => 0.73],
+            ['target' => Currency::JPY, 'rate' => 110.25],
+        ];
+
+        foreach ($normalizedRates as $index => $rate) {
+            $this->assertEquals($source, $rate->source);
+            $this->assertEquals($expectedRates[$index]['target'], $rate->target);
+            $this->assertEquals($expectedRates[$index]['rate'], $rate->rate);
+        }
+    }
 }

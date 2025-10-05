@@ -29,8 +29,24 @@ $exchangeRate = new ExchangeRate($provider);
 
 // Convert 100 USD to EUR.
 $result = $exchangeRate->convert(100, Currency::USD, Currency::EUR);
+echo $result; // Example output: 85.5
 
-echo $result;
+// Get multiple exchange rates at once
+$rates = $exchangeRate->getRates(Currency::USD, [Currency::EUR, Currency::GBP, Currency::JPY]);
+foreach ($rates as $rate) {
+    echo sprintf(
+        "1 %s = %s %s\n",
+        $rate->source->value,
+        $rate->rate,
+        $rate->target->value
+    );
+}
+/*
+Output example:
+1 USD = 0.85 EUR
+1 USD = 0.73 GBP
+1 USD = 110.25 JPY
+*/
 ```
 
 ## Current Supported Providers
@@ -69,6 +85,28 @@ implement the `convert` method.
             }
 
             return null;
+        }
+
+        public function getRates(Currency $source, array $targets): array
+        {
+            // Write your logic here to get multiple exchange rates at once
+            // Example:
+            $rates = [];
+            foreach ($targets as $target) {
+                if ($source === Currency::USD) {
+                    $rates[] = new CurrencyRate(
+                        source: $source,
+                        target: $target,
+                        rate: match($target) {
+                            Currency::VND => 25000,
+                            Currency::EUR => 0.85,
+                            Currency::GBP => 0.73,
+                            default => 1.0
+                        }
+                    );
+                }
+            }
+            return $rates;
         }
     }
     ```
