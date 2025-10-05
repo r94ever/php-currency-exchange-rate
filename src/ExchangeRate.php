@@ -29,7 +29,7 @@ class ExchangeRate
         if (is_string($from)) {
             $from = Currency::tryFrom(strtoupper($from));
 
-            if (!$from instanceof Currency) {
+            if (! $from instanceof Currency) {
                 throw ExchangeRateException::invalidSourceCurrency();
             }
         }
@@ -37,7 +37,7 @@ class ExchangeRate
         if (is_string($to)) {
             $to = Currency::tryFrom(strtoupper($to));
 
-            if (!$to instanceof Currency) {
+            if (! $to instanceof Currency) {
                 throw ExchangeRateException::invalidTargetCurrency();
             }
         }

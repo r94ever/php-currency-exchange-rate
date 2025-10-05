@@ -13,7 +13,7 @@ class CurlHttpClientTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->client = new CurlHttpClient();
+        $this->client = new CurlHttpClient;
     }
 
     #[Test]
