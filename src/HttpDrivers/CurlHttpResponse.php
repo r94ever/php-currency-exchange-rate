@@ -13,7 +13,7 @@ class CurlHttpResponse implements HttpResponseInterface
 
     protected function parseBody(mixed $body): array|string|null
     {
-        if (!$body) {
+        if (! $body) {
             return [];
         }
 

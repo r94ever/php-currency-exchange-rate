@@ -17,9 +17,9 @@ class CurlHttpClient implements HttpClientInterface
     {
         $ch = curl_init();
 
-        if (!empty($params)) {
+        if (! empty($params)) {
             $queryString = http_build_query($params);
-            $url .= $queryString ? "?" . $queryString : "";
+            $url .= $queryString ? '?'.$queryString : '';
         }
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
@@ -57,6 +57,7 @@ class CurlHttpClient implements HttpClientInterface
         if (curl_errno($ch)) {
             $error = curl_error($ch);
             curl_close($ch);
+
             return new CurlHttpResponse($error, 0);
         }
 

@@ -14,7 +14,9 @@ use R94ever\CurrencyExchangeRate\Providers\ExchangeRateHost;
 class ExchangeRateHostTest extends TestCase
 {
     private HttpClientInterface $httpClient;
+
     private ExchangeRateHost $provider;
+
     private HttpResponseInterface $response;
 
     protected function setUp(): void

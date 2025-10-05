@@ -73,13 +73,13 @@ class CurlHttpResponseTest extends TestCase
             'data' => [
                 'items' => [
                     ['id' => 1, 'name' => 'Item 1'],
-                    ['id' => 2, 'name' => 'Item 2']
+                    ['id' => 2, 'name' => 'Item 2'],
                 ],
                 'meta' => [
                     'total' => 2,
-                    'page' => 1
-                ]
-            ]
+                    'page' => 1,
+                ],
+            ],
         ];
         $response = new CurlHttpResponse(json_encode($data), 200);
 
