@@ -1,6 +1,6 @@
 <?php
 
-namespace VendorName\Skeleton\Tests;
+namespace R94ever\CurrencyExchangeRate\Tests;
 
 use PHPUnit\Framework\TestCase;
 
