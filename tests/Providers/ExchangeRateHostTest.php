@@ -19,11 +19,13 @@ class ExchangeRateHostTest extends TestCase
 
     private HttpResponseInterface $response;
 
+    private string $testAccessKey = 'test_access_key';
+
     protected function setUp(): void
     {
         $this->httpClient = $this->createMock(HttpClientInterface::class);
         $this->response = $this->createMock(HttpResponseInterface::class);
-        $this->provider = new ExchangeRateHost('test_access_key', $this->httpClient);
+        $this->provider = new ExchangeRateHost($this->testAccessKey);
     }
 
     #[Test]
@@ -46,7 +48,7 @@ class ExchangeRateHostTest extends TestCase
             ->with(
                 'https://api.exchangerate.host/convert',
                 [
-                    'access_key' => 'test_access_key',
+                    'access_key' => $this->testAccessKey,
                     'from' => 'USD',
                     'to' => 'EUR',
                     'amount' => $amount,
@@ -54,7 +56,9 @@ class ExchangeRateHostTest extends TestCase
             )
             ->willReturn($this->response);
 
-        $result = $this->provider->convert($amount, $from, $to);
+        $result = $this->provider
+            ->useHttpClient($this->httpClient)
+            ->convert($amount, $from, $to);
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -85,7 +89,9 @@ class ExchangeRateHostTest extends TestCase
         $this->expectExceptionMessage($errorMessage);
         $this->expectExceptionCode($errorCode);
 
-        $this->provider->convert($amount, $from, $to);
+        $this->provider
+            ->useHttpClient($this->httpClient)
+            ->convert($amount, $from, $to);
     }
 
     #[Test]
@@ -106,7 +112,10 @@ class ExchangeRateHostTest extends TestCase
             ->method('get')
             ->willReturn($this->response);
 
-        $result = $this->provider->convert($amount, $from, $to);
+        $result = $this->provider
+            ->useHttpClient($this->httpClient)
+            ->convert($amount, $from, $to);
+
         $this->assertNull($result);
     }
 
@@ -131,7 +140,9 @@ class ExchangeRateHostTest extends TestCase
         $this->expectException(ExchangeRateException::class);
         $this->expectExceptionMessage('Unknown error');
 
-        $this->provider->convert($amount, $from, $to);
+        $this->provider
+            ->useHttpClient($this->httpClient)
+            ->convert($amount, $from, $to);
     }
 
     public static function currencyPairProvider(): array
@@ -163,7 +174,7 @@ class ExchangeRateHostTest extends TestCase
             ->with(
                 'https://api.exchangerate.host/convert',
                 [
-                    'access_key' => 'test_access_key',
+                    'access_key' => $this->testAccessKey,
                     'from' => $from->value,
                     'to' => $to->value,
                     'amount' => $amount,
@@ -171,7 +182,10 @@ class ExchangeRateHostTest extends TestCase
             )
             ->willReturn($this->response);
 
-        $result = $this->provider->convert($amount, $from, $to);
+        $result = $this->provider
+            ->useHttpClient($this->httpClient)
+            ->convert($amount, $from, $to);
+
         $this->assertEquals($expectedResult, $result);
     }
 }
