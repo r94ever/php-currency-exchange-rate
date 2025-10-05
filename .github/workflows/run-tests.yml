@@ -1,13 +1,9 @@
 name: Tests
 
 on:
-  push:
-    paths:
-      - '**.php'
-      - '.github/workflows/run-tests.yml'
-      - 'phpunit.xml.dist'
-      - 'composer.json'
-      - 'composer.lock'
+  pull_request:
+    branches:
+      - master
 
 jobs:
   test:
