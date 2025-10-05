@@ -113,7 +113,7 @@ class ExchangeRateTest extends TestCase
     {
         ProviderRegistry::register('mock', MockProvider::class);
 
-        $exchangeRate = new ExchangeRate();
+        $exchangeRate = new ExchangeRate;
         $exchangeRate->useProvider('mock');
 
         $this->assertInstanceOf(MockProvider::class, $exchangeRate->getProvider());
@@ -122,7 +122,7 @@ class ExchangeRateTest extends TestCase
     #[Test]
     public function it_throws_exception_when_using_unregistered_provider()
     {
-        $exchangeRate = new ExchangeRate();
+        $exchangeRate = new ExchangeRate;
 
         $this->expectException(ExchangeRateException::class);
         $this->expectExceptionMessage("Exchange rate provider 'unregistered' not found");
@@ -134,7 +134,7 @@ class ExchangeRateTest extends TestCase
     {
         ProviderRegistry::register('mock', MockProvider::class);
 
-        $exchangeRate = new ExchangeRate();
+        $exchangeRate = new ExchangeRate;
         $exchangeRate->useProvider('mock');
 
         $result = $exchangeRate->convert(100.0, Currency::USD, Currency::EUR);
