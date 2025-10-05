@@ -42,7 +42,7 @@ class ExchangeRateHost extends BaseProvider
 
         if (! $isSuccess) {
             $errorMsg = $responseBody['error']['info'] ?? 'Unknown error';
-            $errorCode = $responseBody['error']['code'] ?? null;
+            $errorCode = $responseBody['error']['code'] ?? 0;
             throw new ExchangeRateException($errorMsg, $errorCode);
         }
 
